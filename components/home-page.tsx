@@ -7,9 +7,20 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Card, CardContent } from "@/components/ui/card"
 import { ChevronLeft, ChevronRight, Home, Search, Users, PlusCircle, Bell, Settings } from "lucide-react"
 
+
+
 export function HomePage() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
-  const [isModalOpen,setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [communityName,setCommunityName] = useState('');
+  const [communityDescription,setCommunityDescription] = useState('');
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+  const handleCloseModal = () =>{
+    setIsModalOpen(false);
+  }
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
@@ -21,7 +32,7 @@ export function HomePage() {
               className="h-8 w-8"
               src="/placeholder.svg?height=32&width=32"
             />
-            <span className="font-semibold text-lg">Community App</span>
+            <span className="font-semibold text-lg">推し活</span>
           </div>
           <div className="flex items-center space-x-4">
             <form className="relative">
@@ -32,7 +43,7 @@ export function HomePage() {
                 type="search"
               />
             </form>
-            <Button
+            <Button onClick={handleOpenModal}
               className="rounded-full bg-gradient-to-r from-orange-400 to-red-500 text-white hover:from-orange-500 hover:to-red-600 transition-all duration-300"
             >
               <PlusCircle className="mr-2 h-4 w-4" />
@@ -108,6 +119,9 @@ export function HomePage() {
           </nav>
         </div>
       </footer>
+
+      {/* モーダル追加*/}
+
     </div>
   )
 }

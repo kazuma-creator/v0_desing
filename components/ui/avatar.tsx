@@ -1,37 +1,40 @@
 "use client"
 
 import * as React from "react"
-import * as AvatarPrimitive from "@radix-ui/react-avatar"
+import * as AvatarPrimitive from "@radix-ui/react-avatar" // Radix UI の Avatarコンポーネントをインポート
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils"// クラス名を結合するためのユーティリティ関数をインポート
 
+// Avatar コンポーネントの定義
 const Avatar = React.forwardRef<
-  React.ElementRef<typeof AvatarPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Root>
+  React.ElementRef<typeof AvatarPrimitive.Root>,// ref の型を定義
+  React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Root>// プロパティの型を定義
 >(({ className, ...props }, ref) => (
   <AvatarPrimitive.Root
-    ref={ref}
+    ref={ref} // ref を渡す
     className={cn(
-      "relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full",
-      className
+      "relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full",// デフォルトのクラスを設定
+      className // 追加のクラスがあれば結合
     )}
-    {...props}
+    {...props} //　他のプロパティをすべて渡す
   />
 ))
-Avatar.displayName = AvatarPrimitive.Root.displayName
+Avatar.displayName = AvatarPrimitive.Root.displayName // コンポーネントの表示名を設定
 
+// AvatarImage コンポーネントの定義
 const AvatarImage = React.forwardRef<
-  React.ElementRef<typeof AvatarPrimitive.Image>,
-  React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Image>
+  React.ElementRef<typeof AvatarPrimitive.Image>,// ref の型を定義
+  React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Image>// プロパティの型を定義
 >(({ className, ...props }, ref) => (
   <AvatarPrimitive.Image
-    ref={ref}
-    className={cn("aspect-square h-full w-full", className)}
-    {...props}
+    ref={ref} // ref を渡す
+    className={cn("aspect-square h-full w-full", className)}// アスペクト比を維持して全体を覆う
+    {...props}// 他のプロパティをすべて渡す
   />
 ))
-AvatarImage.displayName = AvatarPrimitive.Image.displayName
+AvatarImage.displayName = AvatarPrimitive.Image.displayName // コンポーネントの表示名を設定
 
+// AvatarFallback コンポーネントの定義(画像がない場合に表示されるコンテンツ)
 const AvatarFallback = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Fallback>,
   React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Fallback>
@@ -45,6 +48,6 @@ const AvatarFallback = React.forwardRef<
     {...props}
   />
 ))
-AvatarFallback.displayName = AvatarPrimitive.Fallback.displayName
+AvatarFallback.displayName = AvatarPrimitive.Fallback.displayName // コンポーネントの表示名を設定
 
 export { Avatar, AvatarImage, AvatarFallback }
