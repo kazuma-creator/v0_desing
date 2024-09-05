@@ -1,11 +1,12 @@
 'use client'
-
 import { useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Card, CardContent } from "@/components/ui/card"
 import { ChevronLeft, ChevronRight, Home, Search, Users, PlusCircle, Bell, Settings } from "lucide-react"
+import {InputModal} from '@/components/ui/input_modal'
+import { CommunitySetupModal } from './community-setup-modal'
 
 
 
@@ -43,12 +44,7 @@ export function HomePage() {
                 type="search"
               />
             </form>
-            <Button onClick={handleOpenModal}
-              className="rounded-full bg-gradient-to-r from-orange-400 to-red-500 text-white hover:from-orange-500 hover:to-red-600 transition-all duration-300"
-            >
-              <PlusCircle className="mr-2 h-4 w-4" />
-              Create Community
-            </Button>
+            <CommunitySetupModal />
             <Avatar className="h-8 w-8 border-2 border-white shadow-md">
               <AvatarImage alt="User" src="/placeholder.svg?height=32&width=32" />
             </Avatar>
@@ -87,7 +83,7 @@ export function HomePage() {
         <main className="flex-1 p-6">
           <h2 className="text-2xl font-bold mb-6">Communities</h2>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
+            {[1, 2, 3, 4, 5, 6,7].map((i) => (
               <Card key={i} className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
                 <CardContent className="p-0">
                   <div className="flex items-center p-4">
