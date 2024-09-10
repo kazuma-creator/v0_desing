@@ -24,10 +24,11 @@ export function CommunitySetupModal() {
   const [rules, setRules] = useState('')
   const [errors, setErrors] = useState<{ [key: string]: string }>({})
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // create communityをクリックした際の処理
+  const handleSubmit = async(e: React.FormEvent) => {
     e.preventDefault()
     const newErrors: { [key: string]: string } = {}
-
+    // 入力されていない際に表示する警告文
     if (!name.trim()) newErrors.name = 'Community name is required'
     if (!description.trim()) newErrors.description = 'Community description is required'
     if (!icon) newErrors.icon = 'Community icon is required'
@@ -38,15 +39,50 @@ export function CommunitySetupModal() {
       return
     }
 
+    // フォームデータを作成
+    const formData = new FormData();
+    formData.append('name',name);
+    formData.append('description',description);
+    formData.append('rules',rules);
+    if (icon){
+      formData.append('icon',icon);
+    }
+    // デバッグ用に FormData の内容を確認
+    for (let [key,value] of formData.entries()){
+      console.log(`${key}:${value}`)
+    }
+
+    // バックエンドにデータを送信
+    try{
+      const response = await fetch('http://127.0.0.1:5000/api/communities',{
+        method: 'POST',
+        body: formData,
+      });
+      console.log(response);
+      // エラー処理
+      if(!response.ok){
+        throw new Error('コミュニティ作成中にエラーが発生しました');
+      }
+      //モーダルを閉じる
+      setOpen(false);
+
+      // データをリフレッシュしてホーム画面に表示
+      //window.location.reload();
+
+    }catch(error){
+      console.error('コミュニティの作成に失敗しました',error);
+    }
+
     // Here you would typically send the data to your backend
     console.log({ name, description, icon, rules })
     setOpen(false)
   }
 
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">Create New Community</Button>
+        <Button variant="outline" onClick={() => console.log("button clicked")}>Create New Community</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
@@ -128,7 +164,7 @@ export function CommunitySetupModal() {
             </div>
           </div>
           <DialogFooter>
-            <Button type="submit">Create Community</Button>
+            <Button  onClick={()=>{console.log("createボタンがクリックされました")}} type="submit">Create Community</Button>
           </DialogFooter>
         </form>
       </DialogContent>

@@ -1,27 +1,37 @@
 'use client'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Card, CardContent } from "@/components/ui/card"
 import { ChevronLeft, ChevronRight, Home, Search, Users, PlusCircle, Bell, Settings } from "lucide-react"
-import {InputModal} from '@/components/ui/input_modal'
 import { CommunitySetupModal } from './community-setup-modal'
 
+interface Community{
+  id:number;
+  name:string;
+  description:string;
+  icon?:string;
+}
 
 
 export function HomePage() {
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [communityName,setCommunityName] = useState('');
-  const [communityDescription,setCommunityDescription] = useState('');
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [communities,setCommunities] = useState<Community[]>([]);
 
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
-  };
-  const handleCloseModal = () =>{
-    setIsModalOpen(false);
-  }
+  useEffect(()=>{
+    // コミュニティデータを取得
+    const fetchCommunities = async () => {
+      try{
+        const response = await fetch('/api/communities');
+        const data = await response.json();
+        setCommunities(data);
+      }catch(error){
+        // エラー処理
+        console.error('コミュニティの取得に失敗しました',error);
+      }
+    };
+  },[]);
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
@@ -82,21 +92,22 @@ export function HomePage() {
         </aside>
         <main className="flex-1 p-6">
           <h2 className="text-2xl font-bold mb-6">Communities</h2>
+          {/* ここに取得したデータを表示*/}
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {[1, 2, 3, 4, 5, 6,7].map((i) => (
-              <Card key={i} className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
+            {communities.map((community) => (
+              <Card key={community.id} className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
                 <CardContent className="p-0">
                   <div className="flex items-center p-4">
                     <img
-                      alt={`Community ${i}`}
+                      alt={community.name}
                       className="rounded-lg object-cover w-16 h-16 mr-4"
                       height="64"
-                      src={`/placeholder.svg?height=64&width=64&text=C${i}`}
+                      src={community.icon ? `data:image/png;base64,${community.icon}` : `/placeholder.svg?height=64&width=64text=C${community.id}`}
                       width="64"
                     />
                     <div>
-                      <h3 className="font-semibold text-lg mb-1">Community {i}</h3>
-                      <p className="text-sm text-gray-600">A community for enthusiasts of topic {i}</p>
+                      <h3 className="font-semibold text-lg mb-1">{community.name}</h3>
+                      <p className="text-sm text-gray-600">{community.description}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -115,9 +126,6 @@ export function HomePage() {
           </nav>
         </div>
       </footer>
-
-      {/* モーダル追加*/}
-
     </div>
   )
 }
