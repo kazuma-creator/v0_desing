@@ -31,18 +31,20 @@ export function LoginScreen() {
       const response = await fetch('http://localhost:5000/login',{
         method: 'POST',
         headers:{
-
+          'Content-Type':'application/json',
         },
-        body:JSON.stringify({username:userId,password}),
-      })
+        body:JSON.stringify({user_id:userId,password}),
+        credentials:'include',
+      });
 
       const data = await response.json()
-
+      // ログイン成功↓
       if(response.ok){
         setSuccess(data.message)
         setError("")
         router.push("/home")
       }else{
+        // ログイン失敗↓
         setError(data.message)
         setSuccess("")
       }
@@ -50,7 +52,7 @@ export function LoginScreen() {
       setError("Failed to connect to server")
     }
   }
-  // Forgot Passwordをクリック時にアカウント作成画面に遷移させる
+  // パスワード忘れたとき！！
   const handleForgotPassword = () =>{
     router.push("/create_account")
   }

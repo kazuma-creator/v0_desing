@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from "@/components/ui/button_modal"
 import { InputModal } from "@/components/ui/input_modal"
 import { Label } from "@/components/ui/label_modal"
@@ -15,6 +15,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { AlertCircle } from 'lucide-react'
+import { fetchInternalImage } from 'next/dist/server/image-optimizer'
 
 export function CommunitySetupModal() {
   const [open, setOpen] = useState(false)
@@ -23,6 +24,28 @@ export function CommunitySetupModal() {
   const [icon, setIcon] = useState<File | null>(null)
   const [rules, setRules] = useState('')
   const [errors, setErrors] = useState<{ [key: string]: string }>({})
+  const [userId,setUserId] = useState<string | null>(null)
+
+  // モーダルが開いた時に現在ログインしているユーザーIDを取得
+  useEffect(()=>{
+    const fetchUserId = async()=>{
+      try{
+        const response = await fetch('http://127.0.0.1:5000/check_login',{
+          method:'GET',
+          credentials: 'include',
+        });
+        const data = await response.json();
+        if(data.user){
+          setUserId(data.user);
+        }
+      }catch(error){
+        console.error('ユーザーIDの取得に失敗しました',error);
+      }
+    };
+      fetchUserId(); // モーダルが開いたときにユーザーIDを取得
+  },[]);
+
+
 
   // create communityをクリックした際の処理
   const handleSubmit = async(e: React.FormEvent) => {
@@ -47,6 +70,7 @@ export function CommunitySetupModal() {
     if (icon){
       formData.append('icon',icon);
     }
+
     // デバッグ用に FormData の内容を確認
     for (let [key,value] of formData.entries()){
       console.log(`${key}:${value}`)
@@ -54,11 +78,12 @@ export function CommunitySetupModal() {
 
     // バックエンドにデータを送信
     try{
-      const response = await fetch('http://127.0.0.1:5000/api/communities',{
+      const response = await fetch('http://127.0.0.1:5000/api/create_communities',{
         method: 'POST',
         body: formData,
+        credentials: 'include',
       });
-      console.log(response);
+      console.log('responseの内容:',response);
       // エラー処理
       if(!response.ok){
         throw new Error('コミュニティ作成中にエラーが発生しました');

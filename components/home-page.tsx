@@ -23,14 +23,16 @@ export function HomePage() {
     // コミュニティデータを取得
     const fetchCommunities = async () => {
       try{
-        const response = await fetch('/api/communities');
+        const response = await fetch('http://localhost:5000/api/get_communities');
         const data = await response.json();
+        console.log('コミュニティデータ:',data);
         setCommunities(data);
       }catch(error){
         // エラー処理
         console.error('コミュニティの取得に失敗しました',error);
       }
     };
+    fetchCommunities();
   },[]);
 
   return (

@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import {useRouter} from "next/navigation"
 import { Button } from "@/components/ui/button_create_account"
 import { Input } from "@/components/ui/input_create_account"
 import { Label } from "@/components/ui/label_create_account"
@@ -13,10 +14,11 @@ export function CreateAccount() {
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [error, setError] = useState("")
+  const router = useRouter()
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async(e: React.FormEvent) => {
     e.preventDefault()
-    // Basic validation
+    // 基本的なバリデーション
     if (!userName || !userId || !password || !confirmPassword) {
       setError("Please fill in all fields")
     } else if (password !== confirmPassword) {
@@ -25,6 +27,42 @@ export function CreateAccount() {
       setError("")
       console.log("Account creation attempted with:", { userName, userId, password })
       // Here you would typically make an API call to create the account
+    }
+    // アカウント作成API呼び出し
+    try{
+      const response = await fetch('http://localhost:5000/register',{
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json',
+        },
+        body: JSON.stringify({username: userName,user_id:userId,password}),
+      })
+
+      const data = await response.json()
+
+      if (response.ok){
+        setError("")
+        console.log("Account created:",data.message)
+
+        // アカウント作成後、自動ログイン処理
+        const loginResponse = await fetch('http://localhost:5000/login',{
+          method: 'POST',
+          headers:{
+            'Content-Type':'applocation/json',
+          },
+          body: JSON.stringify({user_id: userId,password})
+        })
+        if(loginResponse.ok){
+          // HomePageに遷移
+          router.push("/home")
+        }else{
+          setError("Failed to log in after account creation")
+        }
+      }else{
+        setError(data.message)
+      }
+    }catch (err){
+      setError("An error occurred while creating the account")
     }
   }
 
